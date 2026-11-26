@@ -1,0 +1,21 @@
+name: yangyang-vinyl-calibration
+
+services:
+  backend:
+    build: backend
+    ports:
+      - "127.0.0.1:${BACKEND_PORT:-19349}:8000"
+    environment:
+      DATABASE_URL: sqlite:////data/workbench.db
+      JWT_SECRET: "${JWT_SECRET:-demo-signing-key-local-only-setup}"
+      SEED_DEMO: "${SEED_DEMO:-true}"
+    volumes:
+      - database:/data
+    healthcheck:
+      test: ["CMD", "python", "-c", "from urllib.request import urlopen; urlopen('http://127.0.0.1:8000/api/health', timeout=2).close()"]
+      interval: 2s
+      timeout: 3s
+      retries: 25
+
+volumes:
+  database:
